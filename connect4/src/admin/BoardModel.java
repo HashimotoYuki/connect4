@@ -1,4 +1,4 @@
-package connect4;
+package admin;
 
 public class BoardModel {
 	private long[] piecePos = new long[2];
@@ -8,8 +8,8 @@ public class BoardModel {
 		piecePos[1] = 0;
 	}
 	
-	public void dropPiece(int player, int col) {
-		piecePos[player] |=  ((piecePos[0]|piecePos[1]) & Const.MASK_COLS[col]) + Const.LSB_COLS[col];
+	public void dropPiece(int playerId, int col) {
+		piecePos[playerId] |=  ((piecePos[0]|piecePos[1]) & Const.MASK_COLS[col]) + Const.LSB_COLS[col];
 	}
 	
 	public boolean isColFilled(int col) {
@@ -39,10 +39,10 @@ public class BoardModel {
 		return (int)colBits;
 	}
 	
-	public boolean isAligned(int player) {
+	public boolean isAligned(int playerId) {
 		int numAllLines = Const.MASK_LINES.length;
 		for(int i = 0; i < numAllLines; i++) {
-			if((piecePos[player] & Const.MASK_LINES[i]) == Const.MASK_LINES[i]) {
+			if((piecePos[playerId] & Const.MASK_LINES[i]) == Const.MASK_LINES[i]) {
 				return true;
 			}
 		}
