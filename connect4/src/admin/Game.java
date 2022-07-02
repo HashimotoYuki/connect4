@@ -86,7 +86,8 @@ public class Game {
 	
 	/* 勝敗が決まればtrueを返す */
 	private boolean handleCpuTurn(Cpu cpu) {
-		board.dropPiece(cpu.getPlayerId(), cpu.decideCol(board));
-		return (board.isAligned(cpu.getPlayerId()) || board.isBoardFilled());
+		int col = cpu.decideCol(board);
+		board.dropPiece(cpu.getPlayerId(), col);
+		return (board.isAlignedAfterDrop(cpu.getPlayerId(), col) || board.isBoardFilled());
 	}
 }

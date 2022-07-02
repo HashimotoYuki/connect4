@@ -40,9 +40,17 @@ public class BoardModel {
 	}
 	
 	public boolean isAligned(int playerId) {
-		int numAllLines = Const.MASK_LINES.length;
-		for(int i = 0; i < numAllLines; i++) {
+		for(int i = 0; i < Const.MASK_LINES.length; i++) {
 			if((piecePos[playerId] & Const.MASK_LINES[i]) == Const.MASK_LINES[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isAlignedAfterDrop(int playerId, int col) {
+		for(long mask : Const.MASK_POSSIBLE_LINES.get(col).get(countColPieces(col)-1)) {
+			if((piecePos[playerId] & mask) == mask) {
 				return true;
 			}
 		}
