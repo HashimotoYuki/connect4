@@ -8,6 +8,11 @@ public class BoardModel {
 		piecePos[1] = 0;
 	}
 	
+	public BoardModel(BoardModel original) {
+		piecePos[0] = original.getPiecePos(0);
+		piecePos[1] = original.getPiecePos(1);
+	}
+	
 	public void dropPiece(int playerId, int col) {
 		piecePos[playerId] |=  ((piecePos[0]|piecePos[1]) & Const.MASK_COLS[col]) + Const.LSB_COLS[col];
 	}
@@ -40,8 +45,8 @@ public class BoardModel {
 	}
 	
 	public boolean isAligned(int playerId) {
-		for(int i = 0; i < Const.MASK_LINES.length; i++) {
-			if((piecePos[playerId] & Const.MASK_LINES[i]) == Const.MASK_LINES[i]) {
+		for(long mask : Const.MASK_LINES) {
+			if((piecePos[playerId] & mask) == mask) {
 				return true;
 			}
 		}
@@ -49,12 +54,35 @@ public class BoardModel {
 	}
 	
 	public boolean isAlignedAfterDrop(int playerId, int col) {
-		for(long mask : Const.MASK_POSSIBLE_LINES.get(col).get(countColPieces(col)-1)) {
+		for(long mask : Const.MASK_POSSIBLE_LINES[col]) {
 			if((piecePos[playerId] & mask) == mask) {
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	public boolean isAlignedAfterDropOld(int playerId, int col) {
+		for(long mask : Const.MASK_POSSIBLE_LINES_OLD[col][countColPieces(col)-1]) {
+			if((piecePos[playerId] & mask) == mask) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isSymmetry() {
+		if((piecePos[0] & Const.MASK_COLS[0]) == (piecePos[0] & Const.MASK_COLS[6]) &&
+			(piecePos[1] & Const.MASK_COLS[0]) == (piecePos[1] & Const.MASK_COLS[6]) &&
+			(piecePos[0] & Const.MASK_COLS[1]) == (piecePos[0] & Const.MASK_COLS[5]) &&
+			(piecePos[1] & Const.MASK_COLS[1]) == (piecePos[1] & Const.MASK_COLS[5]) &&
+			(piecePos[0] & Const.MASK_COLS[2]) == (piecePos[0] & Const.MASK_COLS[4]) &&
+			(piecePos[1] & Const.MASK_COLS[2]) == (piecePos[1] & Const.MASK_COLS[4])
+		){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public void printBoardForDebug() {
@@ -74,5 +102,9 @@ public class BoardModel {
 			System.out.println();
 		}
 		System.out.println("-------------\n0 1 2 3 4 5 6\n");
+	}
+	
+	public long getPiecePos(int playerId) {
+		return piecePos[playerId];
 	}
 }

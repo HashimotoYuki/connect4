@@ -7,7 +7,8 @@ public class Const {
 	}
 	
 	public static void setup() {
-		setupMaskPossibleLineList();
+		setupMaskPossibleLineOld();
+		setupMaskPossibleLine();
 	}
 
 	public static final int NUM_COLS = 7;
@@ -49,25 +50,43 @@ public class Const {
 	};
 	
 	/*
-	 * MASK_POSSIBLE_LINES_LIST.get(c).get(r):
-	 * 	c列r行にコマが落ちた場合に、揃う可能性のあるラインのマスクのリスト
+	 * MASK_POSSIBLE_LINES_LIST[c]:
+	 * 	c列にコマが落ちた場合に、揃う可能性のあるラインのマスクのリスト
 	 */
-	public static final ArrayList<ArrayList<ArrayList<Long>>> MASK_POSSIBLE_LINES = new ArrayList<>();
+	public static final long[][] MASK_POSSIBLE_LINES = new long[NUM_COLS][];
 	
-	private static void setupMaskPossibleLineList() {
+	private static void setupMaskPossibleLine() {
 		for(int c = 0; c < NUM_COLS; c++) {
-			MASK_POSSIBLE_LINES.add(new ArrayList<>());
-			for(int r = 0; r < NUM_ROWS; r++) {
-				MASK_POSSIBLE_LINES.get(c).add(new ArrayList<>());
-				
+			long possibleDropPos = 0x000000000000003fL << c*8;
+			ArrayList<Long> applicableLines = new ArrayList<>();  
+			for(long mask : MASK_LINES) {
+				if((possibleDropPos & mask) != 0) {
+					applicableLines.add(mask);
+				}
+			}
+			MASK_POSSIBLE_LINES[c] = new long[applicableLines.size()];
+			for(int i = 0; i < applicableLines.size(); i++) {
+				MASK_POSSIBLE_LINES[c][i] = applicableLines.get(i);
+			}	
+		}
+	}
+
+	public static final long[][][] MASK_POSSIBLE_LINES_OLD = new long[NUM_COLS][NUM_ROWS][];
+	
+	private static void setupMaskPossibleLineOld() {
+		for(int c = 0; c < NUM_COLS; c++) {
+			for(int r = 0; r < NUM_ROWS; r++) {	
 				long dropPos = 0x0000000000000001L << c*8+r;
+				ArrayList<Long> applicableLines = new ArrayList<>();  
 				for(int i = 0; i < MASK_LINES.length; i++) {
 					if((dropPos & MASK_LINES[i]) != 0 && (dropPos<<1 & MASK_LINES[i]) == 0) {
-						MASK_POSSIBLE_LINES.get(c).get(r).add(MASK_LINES[i]);
-						//System.out.print(Long.toHexString(MASK_LINES[i]) + ",");
+						applicableLines.add(MASK_LINES[i]);
 					}
 				}
-				//System.out.println();
+				MASK_POSSIBLE_LINES_OLD[c][r] = new long[applicableLines.size()];
+				for(int i = 0; i < applicableLines.size(); i++) {
+					MASK_POSSIBLE_LINES_OLD[c][r][i] = applicableLines.get(i);
+				}
 			}
 		}
 	}

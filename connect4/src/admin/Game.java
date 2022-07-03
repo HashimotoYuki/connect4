@@ -13,7 +13,7 @@ public class Game {
 	}
 	
 	public void playAlone(int userId) {
-		Cpu cpu = new CpuRandom(userId^1);
+		Cpu cpu = new CpuMinimax(userId^1);
 		
 		board.printBoardForDebug();
 		if(userId == 0) {
@@ -46,8 +46,8 @@ public class Game {
 	}
 	
 	public void watchCpuVsCpu() {
-		Cpu cpu0 = new CpuRandom(0);
-		Cpu cpu1 = new CpuRandom(1);
+		Cpu cpu0 = new CpuMinimax(0);
+		Cpu cpu1 = new CpuMinimax(1);
 		board.printBoardForDebug();
 		while(true) {
 			if(handleCpuTurn(cpu0)) break;
@@ -56,7 +56,6 @@ public class Game {
 			board.printBoardForDebug();
 		}
 		board.printBoardForDebug();
-		
 	}
 	
 	/* 勝敗が決まればtrueを返す */
